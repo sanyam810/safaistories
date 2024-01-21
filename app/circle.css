@@ -1,0 +1,11 @@
+.circle {
+    height: 30px;
+    width: 30px;
+    border-radius: 24px;
+    background-color: rgb(255, 86, 2);
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 99999999; /* so that it stays on top of all other elements */
+  }
