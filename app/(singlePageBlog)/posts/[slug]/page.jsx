@@ -69,11 +69,13 @@ const SinglePage = ({ params }) => {
       if (status === 'authenticated') {
         // Use session.user.email or other user properties as needed
         const email = session?.user?.email;
-
+    
         // Check if the cookie exists for the liked status
         const likedStatus = Cookies.get(`liked_post_${slug}_${email}`);
         if (likedStatus === 'true') {
           setLiked(true);
+        } else {
+          setLiked(false); // Set to false if the cookie is not present
         }
       }
     };
