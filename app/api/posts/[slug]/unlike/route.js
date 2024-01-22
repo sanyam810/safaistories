@@ -2,28 +2,16 @@ import prisma from "@/utils/connect";
 import { NextResponse } from "next/server";
 import { getAuthSession } from "@/utils/auth";
 
-export const POST = async (req,res) => {
+export const DELETE = async (req, res) => {
     const session = await getAuthSession();
     const email = session?.user?.email;
 
     const { slug } = res.params;
-    console.log("Slug in params:", slug);
 
     try {
-        // Remove the duplicate declaration
         if (!slug) {
             return new NextResponse(
                 JSON.stringify({ message: 'Slug is missing' }, { status: 400 })
-            );
-        }
-
-        const post = await prisma.post.findUnique({
-            where: { slug },
-        });
-
-        if (!post) {
-            return new NextResponse(
-                JSON.stringify({ message: 'Post not found' }, { status: 404 })
             );
         }
 
@@ -34,20 +22,21 @@ export const POST = async (req,res) => {
             },
         });
 
-        if (existingLike) {
+        if (!existingLike) {
             return new NextResponse(
-                JSON.stringify({ message: 'Already liked' }, { status: 400 })
+                JSON.stringify({ message: 'Not liked yet' }, { status: 400 })
             );
         }
 
-        const like = await prisma.like.create({
-            data: {
-                userEmail: email,
-                postSlug: slug,
+        await prisma.like.delete({
+            where: {
+                id: existingLike.id,
             },
         });
 
-        return new NextResponse(JSON.stringify(like, { status: 200 }));
+        return new NextResponse(
+            JSON.stringify({ message: 'Successfully unliked' }, { status: 200 })
+        );
     } catch (error) {
         return new NextResponse(
             JSON.stringify({ message: error.message }, { status: 500 })

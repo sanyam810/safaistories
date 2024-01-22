@@ -6,6 +6,10 @@ import Comments from "@/components/commentsC/comments";
 import Nav from "@/components/nav";
 import { useState, useEffect } from "react";
 import { getAuthSession } from "@/utils/auth";
+import { getSession } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
+
+import Cookies from 'js-cookie';
 
 const titleStyle = {
   fontFamily: 'Georgia, serif',
@@ -48,62 +52,87 @@ const getData = async (slug, setLikesCount) => {
 
 const SinglePage = ({ params }) => {
   const { slug } = params;
-  const [liked, setLiked] = useState(false);
   const [likesCount, setLikesCount] = useState(0);
+  const [liked, setLiked] = useState(false);
   const [data, setData] = useState(null); // State to store the fetched data
+  const { data: session, status } = useSession();
+
 
   useEffect(() => {
-    
     const fetchData = async () => {
-  //     const session = await getAuthSession(context.req);
-  // const email = session?.user?.email;
       const result = await getData(slug, setLikesCount);
       setData(result);
     };
 
-    const checkLikeStatus = async() => {
-      
-      const session = await getAuthSession();
-      const email = session?.user?.email;
-      // Check if the cookie exists for the liked status
-      const likedCookie = document.cookie.replace(
-        new RegExp(`(?:(?:^|.*;\\s*)liked_post_${slug}_${email}\\s*\\=\\s*([^;]*).*$)|^.*$`),
-        '$1'
-      );
-  
-      if (likedCookie === 'true') {
-        setLiked(true);
+    const checkLikeStatus = async () => {
+      // Check if the user is signed in
+      if (status === 'authenticated') {
+        // Use session.user.email or other user properties as needed
+        const email = session?.user?.email;
+
+        // Check if the cookie exists for the liked status
+        const likedStatus = Cookies.get(`liked_post_${slug}_${email}`);
+        if (likedStatus === 'true') {
+          setLiked(true);
+        }
       }
     };
 
-    fetchData();
+    fetchData(); // Invoke the async function immediately
     checkLikeStatus();
-  }, [slug]); // Fetch data when slug changes
+
+  }, [slug,session, status]);
 
   const handleLike = async () => {
-    
     try {
-      console.log('Handle Like Slug:', slug);
-      const res = await fetch(`http://localhost:3000/api/posts/${slug}/like`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ slug }), // Send slug in the request body
-      });
-  
-      if (res.ok) {
-        setLiked(true);
-        setLikesCount((prevCount) => prevCount + 1);
+      // Check if the user is signed in
+      if (status === 'authenticated') {
+        const email = session?.user?.email;
+
+        // Check if the post is already liked
+        if (liked) {
+          // Unlike the post
+          const res = await fetch(`http://localhost:3000/api/posts/${slug}/unlike`, {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ slug }),
+          });
+
+          if (res.ok) {
+            // Remove the cookie and update state
+            Cookies.remove(`liked_post_${slug}_${email}`);
+            setLiked(false);
+            setLikesCount((prevCount) => prevCount - 1);
+          } else {
+            console.error('Failed to unlike the post');
+          }
+        } else {
+          // Like the post
+          const res = await fetch(`http://localhost:3000/api/posts/${slug}/like`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ slug }),
+          });
+
+          if (res.ok) {
+            // Set the cookie and update state
+            Cookies.set(`liked_post_${slug}_${email}`, 'true', { expires: 30 });
+            setLiked(true);
+            setLikesCount((prevCount) => prevCount + 1);
+          } else {
+            console.error('Failed to like the post');
+          }
+        }
       } else {
-        // Handle error
-        console.error('Failed to like the post');
+        console.error('User not signed in');
       }
     } catch (error) {
-      console.error('Error liking post:', error);
+      console.error('Error liking/unliking post:', error);
     }
-
-    document.cookie = `liked_post_${slug}_${email}=true; path=/; max-age=${60 * 60 * 24 * 30}`;
   };
 
 
@@ -144,15 +173,16 @@ const SinglePage = ({ params }) => {
           )}
 
           <div>
-          {liked === false && (
             <div>
-              <button onClick={handleLike}>
-                Like
+            {session && (
+            <div>
+              <button onClick={handleLike} style={{ background: liked ? 'yellow' : 'none' }}>
+                {liked ? 'Unlike' : 'Like'}
               </button>
-              
             </div>
-          )}
-          <span>{likesCount} likes</span>
+            )}
+            </div>
+            <span>{likesCount} likes</span>
           </div>
 
           <div style={{ marginTop: '2rem', marginBottom: '1rem' }}>
