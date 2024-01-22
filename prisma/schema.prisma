@@ -54,6 +54,7 @@ model User {
   Comment       Comment[]
   role          UserRole  @default(USER)
   highlights Highlight[]
+  likes Like[]
 }
 
 model VerificationToken {
@@ -76,7 +77,19 @@ model Post{
   userEmail String
   user User @relation(fields: [userEmail], references: [email])
   comments Comment[]
+  likedBy   Like[]
+  likesCount Int      @default(0)
+}
 
+model Like {
+  id        String   @id @default(cuid()) @map("_id")
+  createdAt DateTime @default(now())
+  userEmail String
+  user      User     @relation(fields: [userEmail], references: [email])
+  postSlug  String
+  post      Post     @relation(fields: [postSlug], references: [slug])
+
+  @@unique([userEmail, postSlug])
 }
 
 model Comment{

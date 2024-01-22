@@ -1,9 +1,10 @@
 import prisma from "@/utils/connect";
 import { NextResponse } from "next/server";
-
+import { getAuthSession } from "@/utils/auth";
 
 
 export const GET = async (req,{params}) => {
+
 
     const {slug} = params;
     // const {searchParams} = new URL(req.nextUrl);
@@ -18,10 +19,15 @@ export const GET = async (req,{params}) => {
                 slug
             },
             data:{views:{increment:1}},
-            include:{user:true}
+            include:{user:true,likedBy:true}
         });
 
-        return new NextResponse(JSON.stringify(post,{status:200}));
+        const response = {
+          ...post,
+          likesCount: post.likedBy.length,
+        };
+
+        return new NextResponse(JSON.stringify(response,{status:200}));
     }
     catch(err){
         return new NextResponse(JSON.stringify({ message: err.message },{status:500}));
@@ -49,4 +55,6 @@ export const DELETE = async (req,{params}) => {
       );
     }
 };
+
+
 
