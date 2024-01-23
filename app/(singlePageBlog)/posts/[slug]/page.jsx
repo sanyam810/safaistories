@@ -4,10 +4,19 @@
 import Image from "next/image";
 import Comments from "@/components/commentsC/comments";
 import Nav from "@/components/nav";
+import MobileNav from "@/components/mobileNav";
 import { useState, useEffect } from "react";
 import { getAuthSession } from "@/utils/auth";
 import { getSession } from 'next-auth/react';
 import { useSession } from 'next-auth/react';
+import { HiFlag } from 'react-icons/hi';  // Lucide's HiFlag for yellow flag
+import { BiCheck } from 'react-icons/bi';  // Lucide's BiCheck for green flag
+import { FiAlertCircle } from 'react-icons/fi'; 
+// import { Image } from "next/image";
+
+import gflag from '@/public/images/gflag.png';
+import yflag from '@/public/images/yflag.png';
+import rflag from '@/public/images/rflag.png';
 
 import Cookies from 'js-cookie';
 
@@ -357,7 +366,12 @@ const SinglePage = ({ params }) => {
 
   return (
     <div>
-      <Nav />
+      <div className="hidden md:block">
+        <Nav />
+      </div>
+      <div className="md:hidden">
+        <MobileNav />
+      </div>
       <div style={{ margin: '0 auto', minHeight: '100vh', maxWidth: '80rem' }}>
         {/* Apply padding top to the content section */}
         <div style={contentStyle}>
@@ -366,6 +380,53 @@ const SinglePage = ({ params }) => {
               <div style={titleStyle}>
                 {data.title}
               </div>
+
+              {session && (
+                <div className="flex flex-row gap-8">
+                <div>
+                  {session && (
+                    <div className="flex flex-row">
+                      <button onClick={handleGreen}>
+                        {green ? <div className="bg-black">
+                          <Image src={gflag} alt="green flag" width={40} height={40} /> 
+                        </div>: <Image src={gflag} alt="green flag" width={20} height={20} />}
+                      </button>
+                      <div>
+                      {greenCount}
+                      </div>
+                    </div>
+                  )}
+                </div>
+                
+                <div>
+                  {session && (
+                    <div className="flex flex-row">
+                      <button onClick={handleYellow}>
+                        {yellow ? <Image src={yflag} alt="yellow flag" width={40} height={40} /> : <Image src={yflag} alt="yellow flag" width={20} height={20} />}
+                      </button>
+                      <div>
+                      {yellowCount}
+                      </div>
+                    </div>
+                  )}
+                </div>
+                  
+                  
+                <div>
+                  {session && (
+                    <div className="flex flex-row">
+                      <button onClick={handleRed}>
+                        {red ? <Image src={rflag} alt="yellow flag" width={40} height={40} /> : <Image src={rflag} alt="red flag" width={20} height={20} />}
+                      </button>
+                      <div>
+                      {redCount}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+              )}
+
               <div style={{ display: 'flex', flexDirection: 'row', gap: '1rem', ...descStyle2 }}>
                 {data.user?.image && (
                   <img className="userImage2" src={data.user.image} alt="User" width={48} height={48} style={{ borderRadius: '50%' }} />
@@ -385,7 +446,7 @@ const SinglePage = ({ params }) => {
             </div>
           )}
 
-          <div>
+          {/* <div>
             <div>
             {session && (
             <div>
@@ -396,47 +457,10 @@ const SinglePage = ({ params }) => {
             )}
             </div>
             <span>{likesCount} likes</span>
-          </div>
+          </div> */}
 
-          <div>
-            <div>
-            {session && (
-            <div>
-              <button onClick={handleGreen} style={{ background: green ? 'green' : 'none' }}>
-                {green ? 'Unmark' : 'Mark Green'}
-              </button>
-            </div>
-            )}
-            </div>
-            <span>{greenCount} likes</span>
-          </div>
-
-          <div>
-            <div>
-            {session && (
-            <div>
-              <button onClick={handleYellow} style={{ background: yellow ? 'yellow' : 'none' }}>
-                {yellow ? 'Unmark' : 'Mark Yellow'}
-              </button>
-            </div>
-            )}
-            </div>
-            <span>{yellowCount} likes</span>
-          </div>
-
-          <div>
-            <div>
-            {session && (
-            <div>
-              <button onClick={handleRed} style={{ background: red ? 'red' : 'none' }}>
-                {red ? 'Unmark' : 'Mark Red'}
-              </button>
-            </div>
-            )}
-            </div>
-            <span>{redCount} likes</span>
-          </div>
-
+          
+          
           <div style={{ marginTop: '2rem', marginBottom: '1rem' }}>
             <Comments postSlug={slug} />
           </div>
