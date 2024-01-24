@@ -19,12 +19,15 @@ export const GET = async (req,{params}) => {
                 slug
             },
             data:{views:{increment:1}},
-            include:{user:true,likedBy:true}
+            include:{user:true,likedBy:true,greenflaggedBy:true,redflaggedBy:true,yellowflaggedBy:true}
         });
 
         const response = {
           ...post,
           likesCount: post.likedBy.length,
+          greenCount: post.greenflaggedBy.length,
+          redCount: post.redflaggedBy.length,
+          yellowCount: post.yellowflaggedBy.length,
         };
 
         return new NextResponse(JSON.stringify(response,{status:200}));

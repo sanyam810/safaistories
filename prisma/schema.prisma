@@ -55,6 +55,9 @@ model User {
   role          UserRole  @default(USER)
   highlights Highlight[]
   likes Like[]
+  redflags Redflag[]
+  yellowflags Yellowflag[]
+  greenflags Greenflag[]
 }
 
 model VerificationToken {
@@ -79,9 +82,51 @@ model Post{
   comments Comment[]
   likedBy   Like[]
   likesCount Int      @default(0)
+  redflaggedBy Redflag[]
+  redCount Int      @default(0)
+  yellowflaggedBy Yellowflag[]
+  yellowCount Int      @default(0)
+  greenflaggedBy Greenflag[]
+  greenCount Int      @default(0)
+  
 }
 
+
+
 model Like {
+  id        String   @id @default(cuid()) @map("_id")
+  createdAt DateTime @default(now())
+  userEmail String
+  user      User     @relation(fields: [userEmail], references: [email])
+  postSlug  String
+  post      Post     @relation(fields: [postSlug], references: [slug])
+
+  @@unique([userEmail, postSlug])
+}
+
+model Redflag {
+  id        String   @id @default(cuid()) @map("_id")
+  createdAt DateTime @default(now())
+  userEmail String
+  user      User     @relation(fields: [userEmail], references: [email])
+  postSlug  String
+  post      Post     @relation(fields: [postSlug], references: [slug])
+
+  @@unique([userEmail, postSlug])
+}
+
+model Yellowflag {
+  id        String   @id @default(cuid()) @map("_id")
+  createdAt DateTime @default(now())
+  userEmail String
+  user      User     @relation(fields: [userEmail], references: [email])
+  postSlug  String
+  post      Post     @relation(fields: [postSlug], references: [slug])
+
+  @@unique([userEmail, postSlug])
+}
+
+model Greenflag {
   id        String   @id @default(cuid()) @map("_id")
   createdAt DateTime @default(now())
   userEmail String

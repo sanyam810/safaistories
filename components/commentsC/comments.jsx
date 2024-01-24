@@ -36,10 +36,11 @@ const Comments = ({ postSlug }) => {
     toast.success("Comment added successfully!");
     mutate();
   };
+  
 
   return (
     <div className="mx-auto max-w-screen-xl">
-    <div className="bg-gray-100 p-6 rounded-lg shadow-md">
+    <div className="bg-white p-6 rounded-lg shadow-md">
       <h1 className="text-2xl font-semibold mb-4">Comments</h1>
       {status === "authenticated" ? (
         <div className="mb-6 mt-8">
@@ -48,8 +49,9 @@ const Comments = ({ postSlug }) => {
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
             onChange={(e) => setDesc(e.target.value)}
           />
-         
-            <Button variant="default"  onClick={handleSubmit}>Send</Button>
+            <div style={{paddingTop:'10px'}}>
+              <Button variant="default"  onClick={handleSubmit}>Send</Button>
+            </div>
             <div className="text-white">Hello</div>
           
         </div>

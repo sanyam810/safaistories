@@ -2,6 +2,7 @@
 
 import { useState,useEffect } from 'react';
 import AuthLinks from "./authlinks";
+import Link from 'next/link';
 // import audioFile from "./audioFinal.mp3";
 
 const Nav = () => {
@@ -28,7 +29,7 @@ const Nav = () => {
         <div className="fixed top-0 w-full bg-transparent z-50 nav" >
             <div className="flex justify-center py-4 px-8">
                 <div className="flex gap-10 bg-white pt-2 pb-2 pl-8 pr-8 rounded-3xl text-lg">
-                    <div>Home</div>
+                    <Link href="/"><div>Home</div></Link>
                     <div>About</div>
                     <div>Blogs</div>
                     <AuthLinks/>

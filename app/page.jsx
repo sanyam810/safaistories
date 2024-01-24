@@ -52,7 +52,10 @@ export default function Home({searchParams}) {
         <Highlight />
         
         <CardList page={page}/>
+        <div id="contact">
         <ContactUs />
+        </div>
+        
         {/* <Footer /> */}
       </div>
         
