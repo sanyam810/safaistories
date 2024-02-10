@@ -4,6 +4,8 @@
 import { useState, useEffect } from 'react';
 import prisma from '@/utils/connect';
 
+import Image from 'next/image';
+
 const SearchPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
@@ -41,12 +43,25 @@ const SearchPage = () => {
       {/* Display Search Results */}
       <div>
         <h2>Search Results</h2>
-        {searchResults.titles ? (
-          <ul>
-            {searchResults.titles.map((title, index) => (
-              <li key={index}>{title}</li>
-            ))}
-          </ul>
+        {searchResults.length > 0 ? (
+          searchResults.map((item, index) => (
+            <div key={index} className="bg-white shadow-lg rounded-md p-6 mb-8" style={{ marginBottom: '12px' }}>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-2xl font-bold">{item.title}</h2>
+              </div>
+              <p className="text-gray-600 mb-4">{item.desc.substring(0, 150)}...</p>
+              <div className="flex items-center text-gray-500">
+
+                <div layout="fill" objectFit="cover" className="rounded-lg">
+                  <img src={item.img}></img> 
+                </div>
+                 
+              
+                <span style={{ marginLeft: '5px' }}>{item?.createdAt?.substring(0, 10)}</span>
+              </div>
+              {/* Add any additional buttons or actions here */}
+            </div>
+          ))
         ) : (
           <p>No results found</p>
         )}

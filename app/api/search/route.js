@@ -15,14 +15,23 @@ export const GET = async (req) => {
   const query = {
     where: {
       OR: [
-        { title: { contains: searchTerm } }, // Remove caseSensitive option
+        { title: { contains: searchTerm, mode:'insensitive' } }, // Remove caseSensitive option
       ],
     },
+    select: { // Selecting only the required fields
+      title: true,
+      img: true, // Assuming 'img' is the field for image
+      desc: true // Assuming 'desc' is the field for description
+    }
   };
 
   try {
     const posts = await prisma.post.findMany(query);
-    const titles = posts.map((post) => post.title);
+    const titles = posts.map((post) => ({
+      title: post.title,
+      img: post.img,
+      desc: post.desc
+      }));
 
     return new NextResponse(
       JSON.stringify({ titles, status: 200 })
