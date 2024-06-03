@@ -14,6 +14,10 @@ import { BiCheck } from 'react-icons/bi';  // Lucide's BiCheck for green flag
 import { FiAlertCircle } from 'react-icons/fi'; 
 // import { Image } from "next/image";
 
+import { useRouter } from "next/navigation";
+
+
+
 import gflag from '@/public/images/gflag.png';
 import yflag from '@/public/images/yflag.png';
 import rflag from '@/public/images/rflag.png';
@@ -74,6 +78,8 @@ const SinglePage = ({ params }) => {
   const [red, setRed] = useState(false);
   const [data, setData] = useState(null); // State to store the fetched data
   const { data: session, status } = useSession();
+
+  const router = useRouter();
   
 
 
@@ -364,6 +370,10 @@ const SinglePage = ({ params }) => {
     paddingTop: '5rem', // Adjust this value to create space below the fixed navbar
   };
 
+  const handleEdit = () => {
+    router.push(`/edit/${slug}`);
+  };
+
   return (
     <div>
       <div className="hidden md:block">
@@ -442,6 +452,11 @@ const SinglePage = ({ params }) => {
                 dangerouslySetInnerHTML={{ __html: data.desc }}
                 style={{ ...descStyle2 }}
               />
+              {session?.user?.email === data.user.email && (
+                <button onClick={handleEdit} className="edit-button">
+                  Edit Post
+                </button>
+              )}
               <div style={{ height: '1px', width: '100%', backgroundColor: 'black', margin: '1rem 0' }}></div>
             </div>
           )}

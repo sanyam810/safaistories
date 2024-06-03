@@ -36,6 +36,12 @@ import Nav from "@/components/nav";
 
 const WritePage = () => {
   const { status } = useSession();
+  
+
+  if (status === "unauthenticated") {
+    window.location.href = "/login";
+    return null;
+  }
 
   const [editorState, setEditorState] = useState(() => EditorState.createEmpty());
 
