@@ -29,14 +29,14 @@ const Nav = () => {
         <div className="fixed top-0 w-full bg-transparent z-50 nav" >
             <div className="flex justify-center py-4 px-8">
                 <div className="flex gap-10 bg-white pt-2 pb-2 pl-8 pr-8 rounded-3xl text-lg">
-                    <Link href="/"><div>Home</div></Link>
-                    <div>About</div>
-                    <div>Blogs</div>
+                    <Link href="/"><div className='cursor-pointer'>Home</div></Link>
+                    <div className='cursor-pointer'>About</div>
+                    <div className='cursor-pointer'>Blogs</div>
                     <AuthLinks/>
                     {/* <div>
                       <button onClick={toggleAudio}>{isPlaying ? 'Stop Audio' : 'Play Audio'}</button>
                     </div> */}
-                    <div>Contact</div>
+                    <div className='cursor-pointer'>Contact</div>
                 </div>
             </div>
             <style jsx>{`

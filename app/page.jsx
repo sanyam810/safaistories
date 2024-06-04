@@ -10,6 +10,7 @@ import CardList from "@/components/cardlistC/CardList";
 import Navbar from "@/components/navbar";
 import ContactUs from "@/components/ContactUs";
 import MobileNav from "@/components/mobileNav";
+import { useRef } from "react";
 import Highlight from "@/components/highlight";
 // import Navbar from "@/components/navbarC/navbar";
 
@@ -17,6 +18,10 @@ import Highlight from "@/components/highlight";
 export default function Home({searchParams}) {
 
   const page = parseInt(searchParams.page) || 1;
+  const cardListRef = useRef();
+  const contactRef = useRef();
+  const homeRef=useRef();
+  const aboutRef=useRef();
 
   useEffect(()=>{
     (
@@ -31,29 +36,54 @@ export default function Home({searchParams}) {
     window.scrollTo(0, 0);
   }, []);
 
+  const scrollToCardList = () => {
+    cardListRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const scrollToContact = () => {
+    contactRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const scrollToAbout = () => {
+    aboutRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  const scrollToHome = () => {
+    homeRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }
+
+
 
   return (
     <main>
       <div className="hidden md:block">
-        <Navbar />
+        <Navbar scrollToCardList={scrollToCardList} scrollToContact={scrollToContact} scrollToAbout={scrollToAbout} scrollToHome={scrollToHome}/>
       </div>
       <div className="md:hidden">
-        <MobileNav />
+        <MobileNav scrollToCardList={scrollToCardList} scrollToContact={scrollToContact} scrollToAbout={scrollToAbout} scrollToHome={scrollToHome} />
       </div>
       <div>
 
       </div>
       
-      <Hero />
+      <div ref={homeRef}>
+        <Hero />
+      </div>
+      
       
       <div>
-        <Description />
+        <div ref={aboutRef}>
+          <Description />
+        </div>
+        
         <Featured/>
         <Highlight />
         
-        <CardList page={page}/>
-        <div id="contact">
-        <ContactUs />
+        <div ref={cardListRef}>
+          <CardList page={page} />
+        </div>
+        <div ref={contactRef}id="contact">
+          <ContactUs />
         </div>
         
         {/* <Footer /> */}

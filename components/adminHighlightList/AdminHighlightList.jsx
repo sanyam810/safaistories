@@ -22,7 +22,7 @@ const AdminHighlightList = async ({page})=>{
   
   const {highlight,count}= await getData(page);
   console.log(highlight)
-  const POST_PER_PAGE=5;
+  const POST_PER_PAGE=10000000;
 
   const hasPrev= POST_PER_PAGE * (page-1) > 0;
   const hasNext= POST_PER_PAGE * (page+1) + POST_PER_PAGE < count;
@@ -42,7 +42,7 @@ const AdminHighlightList = async ({page})=>{
             <AdminHighlightCard key={item._id} item={item}/>
           ))}
         </div>
-        <Pagination page={page} hasPrev={hasPrev} hasNext={hasNext}/>
+        {/* <Pagination page={page} hasPrev={hasPrev} hasNext={hasNext}/> */}
       </div>
   )
 }

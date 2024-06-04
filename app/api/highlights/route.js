@@ -1,8 +1,10 @@
 import { getAuthSession } from "@/utils/auth";
 import prisma from "@/utils/connect";
 import { NextResponse } from "next/server";
+import { unstable_noStore as noStore } from 'next/cache';
 
 export const GET = async (req) => {
+    noStore();
     try {
         const highlights = await prisma.highlight.findMany();
 
@@ -19,7 +21,7 @@ export const GET = async (req) => {
 };
 
 export const POST = async (req) => {
-
+    noStore();
     const session = await getAuthSession()
     if (!session) {
         return new NextResponse(JSON.stringify({ message: "Unauthorized" },{status:401}));

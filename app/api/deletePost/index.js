@@ -1,4 +1,7 @@
+import { unstable_noStore as noStore } from 'next/cache';
+
 export const DELETE = async (req,{params}) => {
+  noStore()
     const {slug} = params;
   
     try {

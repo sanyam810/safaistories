@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Comments from "@/components/commentsC/comments";
+import { unstable_noStore as noStore } from 'next/cache';
 
 
 const getData = async (slug) => {
@@ -15,6 +16,7 @@ const getData = async (slug) => {
 };
 
 const SinglePage = async ({ params }) => {
+noStore();
   const { slug } = params;
   const data = await getData(slug);
 

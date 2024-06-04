@@ -7,10 +7,11 @@ import { getServerSession } from "next-auth";
 import Nav from "@/components/nav";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-
+import { unstable_noStore as noStore } from 'next/cache';
 
 
 const BlogPage = async ({searchParams}) => {
+  noStore();
   const page = parseInt(searchParams.page) || 1;
 
   const session=await getServerSession(authOptions);
@@ -21,9 +22,9 @@ const BlogPage = async ({searchParams}) => {
 
   return (
     <div>
-      <div>
+      {/* <div>
         <Nav />
-      </div>
+      </div> */}
     <div className="container mx-auto py-8">
       <div className="flex gap-12 mt-8">
         <AdminHighlightList page={page}/>

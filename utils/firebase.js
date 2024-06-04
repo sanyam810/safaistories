@@ -6,11 +6,11 @@ import { initializeApp } from "firebase/app";
 // Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: process.env.FIREBASE,
-  authDomain: "safai-stories-fireb.firebaseapp.com",
-  projectId: "safai-stories-fireb",
-  storageBucket: "safai-stories-fireb.appspot.com",
-  messagingSenderId: "773016232153",
-  appId: "1:773016232153:web:fccd4c9775bdf4e236dec8"
+  authDomain: "safaistories-3bafe.firebaseapp.com",
+  projectId: "safaistories-3bafe",
+  storageBucket: "safaistories-3bafe.appspot.com",
+  messagingSenderId: "708434649250",
+  appId: "1:708434649250:web:cc9c203c6c336adcc6b7fb"
 };
 
 // Initialize Firebase

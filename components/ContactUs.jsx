@@ -31,7 +31,7 @@ const ContactUs = () => {
     e.preventDefault();
 
     emailjs
-      .sendForm("service_op155xt", "template_x0uafxc", formRef.current, "1-DTzwJR9BZbNBGQy")
+      .sendForm("service_ggy955s","template_g4nguii", formRef.current, "H14bah41aVdT1oblX")
       .then((result) => {
         console.log(result.text);
         toast.success('Message sent successfully!');
@@ -122,7 +122,7 @@ const ContactUs = () => {
           </div>
 
           <input
-            className="w-full px-4 py-2 text-white bg-black rounded-lg cursor-pointer hover:bg-orange-600"
+            className="w-full px-4 py-2 text-black border bg-black rounded-lg cursor-pointer hover:bg-orange-600"
             type="submit"
             value="Send"
           />

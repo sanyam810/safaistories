@@ -1,11 +1,12 @@
 import prisma from "@/utils/connect";
 import { NextResponse } from "next/server";
 import { getAuthSession } from "@/utils/auth";
+import { unstable_noStore as noStore } from 'next/cache';
 
 
 export const GET = async (req,{params}) => {
 
-
+    noStore();
     const {slug} = params;
     // const {searchParams} = new URL(req.nextUrl);
 
@@ -39,6 +40,7 @@ export const GET = async (req,{params}) => {
 };
 
 export const DELETE = async (req,{params}) => {
+    noStore();
     const {slug} = params;
   
     try {
@@ -57,6 +59,41 @@ export const DELETE = async (req,{params}) => {
         JSON.stringify({ message: err.message }, { status: 500 })
       );
     }
+};
+
+export const PUT = async (req, { params }) => {
+  noStore();
+  const session = await getAuthSession();
+  if (!session) {
+    return new NextResponse(JSON.stringify({ message: "Unauthorized" }, { status: 401 }));
+  }
+
+  try {
+    const { slug } = params; // Extract slug from params
+    const data = await req.json(); // Data to update
+
+    const post = await prisma.post.findUnique({
+      where: { slug },
+    });
+
+    if (!post) {
+      return new NextResponse(JSON.stringify({ message: "Post not found" }, { status: 404 }));
+    }
+
+    if (post.userEmail !== session.user.email) {
+      return new NextResponse(JSON.stringify({ message: "Forbidden" }, { status: 403 }));
+    }
+
+    const updatedPost = await prisma.post.update({
+      where: { slug },
+      data,
+    });
+
+    return new NextResponse(JSON.stringify(updatedPost, { status: 200 }));
+  } catch (err) {
+    console.log(err);
+    return new NextResponse(JSON.stringify({ message: err.message }, { status: 500 }));
+  }
 };
 
 

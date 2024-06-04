@@ -2,7 +2,9 @@ import { useState } from "react";
 import AuthLinks from "./authlinks";
 import Image from "next/image";
 
-const MobileNav = () => {
+
+
+const MobileNav = ({ scrollToCardList,scrollToContact,scrollToAbout,scrollToHome }) => {
 
     const [showMenu, setShowMenu] = useState(false);
     const [imageRotation, setImageRotation] = useState(0);
@@ -13,17 +15,17 @@ const MobileNav = () => {
     };
 
     const menuItems = [
-        <div key="home" className="menu-item" style={{paddingLeft:'22px'}}>
+        <div key="home" className="menu-item" style={{paddingLeft:'22px'}} onClick={scrollToHome}>
             Home
         </div>,
-        <div key="about" className="menu-item" style={{paddingLeft:'22px'}}>
+        <div key="about" className="menu-item" style={{paddingLeft:'22px'}} onClick={scrollToAbout}>
             About
         </div>,
-        <div key="blogs" className="menu-item" style={{paddingLeft:'23px'}}>
+        <div key="blogs" className="menu-item" style={{paddingLeft:'23px'}} onClick={scrollToCardList}>
             Blogs
         </div>,
         <AuthLinks key="auth" className="menu-item" />,
-        <div key="contact" className="menu-item" style={{paddingLeft:'18px'}}>
+        <div key="contact" className="menu-item" style={{paddingLeft:'18px'}} onClick={scrollToContact}>
             Contact
         </div>,
     ];

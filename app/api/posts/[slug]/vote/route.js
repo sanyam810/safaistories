@@ -1,9 +1,11 @@
 import prisma from "@/utils/connect";
 import { NextResponse } from "next/server";
 import { getAuthSession } from "@/utils/auth";
+import { unstable_noStore as noStore } from 'next/cache';
 
 
 export const POST = async (req, res) => {
+  noStore();
     // Ensure that the request method is POST
     if (req.method !== 'POST') {
       return NextResponse.error(new Error('Method Not Allowed'), 405);

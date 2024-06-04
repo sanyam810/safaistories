@@ -1,10 +1,11 @@
 import prisma from "@/utils/connect";
 import { NextResponse } from "next/server";
-
+import { unstable_noStore as noStore } from 'next/cache';
 
 
 export const GET = async (req,{params}) => {
 
+    noStore();
     const {slug} = params;
     // const {searchParams} = new URL(req.nextUrl);
 
@@ -30,6 +31,7 @@ export const GET = async (req,{params}) => {
 };
 
 export const DELETE = async (req,{params}) => {
+  noStore();
     const {slug} = params;
   
     try {
@@ -51,6 +53,7 @@ export const DELETE = async (req,{params}) => {
 };
 
 export const PUT = async (req, { params }) => {
+  noStore();
   const { slug } = params;
 
   try {

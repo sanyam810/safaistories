@@ -3,8 +3,10 @@
 import { useState, useEffect } from 'react';
 import PC from '@/components/PC';
 import Nav from '@/components/nav';
+import { unstable_noStore as noStore } from 'next/cache';
 
 const ComPan = ({ searchParams }) => {
+  noStore();
   const [posts, setPosts] = useState([]);
   const [selectedPost, setSelectedPost] = useState('');
 
@@ -41,9 +43,9 @@ const ComPan = ({ searchParams }) => {
 
   return (
     <div>
-      <div>
+      {/* <div>
         <Nav />
-      </div>
+      </div> */}
       <div className="container mx-auto py-8">
       <div className="flex justify-center items-center h-screen">
         <div className="bg-white font shadow-md rounded px-8 py-6" style={{marginTop:'500px'}}>
