@@ -1,8 +1,10 @@
 import { getAuthSession } from "@/utils/auth";
 import prisma from "@/utils/connect";
 import { NextResponse } from "next/server";
+import { unstable_noStore as noStore } from 'next/cache';
 
 export const GET = async (req) => {
+    noStore();
     try {
         const posts = await prisma.post.findMany({
             include: { user: true }

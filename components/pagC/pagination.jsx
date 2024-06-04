@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { Button } from "../ui/button";
@@ -24,7 +22,7 @@ const Pagination = ({ page, hasPrev, hasNext }) => {
       <div className="flex gap-14">
         <div style={{marginLeft:'25px'}}>
             <Link href={`/?page=${page - 1}`} passHref scroll={false}>
-              <Button  variant="default" onClick={saveScrollPosition}>
+              <Button  variant="default" onClick={saveScrollPosition} disabled={!hasPrev}>
                 Prev
               </Button>
             </Link>
@@ -32,7 +30,7 @@ const Pagination = ({ page, hasPrev, hasNext }) => {
         <div style={{marginLeft:'20px'}}>
           
             <Link href={`/?page=${page + 1}`} passHref scroll={false}>
-              <Button  variant="default" onClick={saveScrollPosition}>
+              <Button  variant="default" onClick={saveScrollPosition} disabled={!hasNext}>
                 Next
               </Button>
             </Link>

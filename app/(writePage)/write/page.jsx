@@ -1,67 +1,42 @@
 "use client";
 
-// import { signIn, useSession } from "next-auth/react";
-import styles from "./writePage.module.css";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import "react-quill/dist/quill.bubble.css";
+import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import ReactQuill from "react-quill";
-
-import toast from "react-hot-toast";
-
-import { EditorState, convertToRaw, convertFromRaw } from 'draft-js';
-// import { Editor } from 'react-draft-wysiwyg';
-import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
-
-import {
-  getStorage,
-  ref,
-  uploadBytesResumable,
-  getDownloadURL,
-} from "firebase/storage";
-// import { app } from "@/utils/firebase";
+import dynamic from "next/dynamic";
+import { unstable_noStore as noStore } from 'next/cache';
+import toast, { Toaster } from "react-hot-toast";
+import { EditorState, convertToRaw } from 'draft-js';
+import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { app } from "@/utils/firebase";
-
 import Image from "next/image";
-
 import { Button } from "@/components/ui/button";
 import Nav from "@/components/nav";
-// import { stat } from "fs";
+import styles from "./writePage.module.css";
 
-// const editorStyle = {
-//   fontSize: '16px', // Change this value to adjust the font size
-// };
-
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
+import "react-quill/dist/quill.bubble.css";
 
 const WritePage = () => {
   const { status } = useSession();
-  
-
-  if (status === "unauthenticated") {
-    window.location.href = "/login";
-    return null;
-  }
-
-  const [editorState, setEditorState] = useState(() => EditorState.createEmpty());
-
-  const handleEditorStateChange = (newEditorState) => {
-    setEditorState(newEditorState);
-  };
-
-  // const ReactQuill = dynamic(()=> import('react-quill'),{ssr:false})
   const router = useRouter();
 
+  const [editorState, setEditorState] = useState(() => EditorState.createEmpty());
   const [open, setOpen] = useState(false);
   const [file, setFile] = useState(null);
   const [media, setMedia] = useState("");
   const [value, setValue] = useState("");
   const [title, setTitle] = useState("");
-  // const [catSlug, setCatSlug] = useState("");
 
   useEffect(() => {
-    const storage = getStorage(app);  
-    const upload = () => {
+    if (status === "unauthenticated") {
+      window.location.href = "/login";
+    }
+  }, [status]);
+
+  useEffect(() => {
+    if (file) {
+      const storage = getStorage(app);
       const name = new Date().getTime() + file.name;
       const storageRef = ref(storage, name);
 
@@ -70,37 +45,25 @@ const WritePage = () => {
       uploadTask.on(
         "state_changed",
         (snapshot) => {
-          const progress =
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
           console.log("Upload is " + progress + "% done");
-          switch (snapshot.state) {
-            case "paused":
-              console.log("Upload is paused");
-              break;
-            case "running":
-              console.log("Upload is running");
-              break;
-          }
         },
-        (error) => {},
+        (error) => {
+          console.error("Upload failed:", error);
+        },
         () => {
           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
             setMedia(downloadURL);
+            toast.success("Image uploaded successfully!");
           });
         }
       );
-    };
-
-    file && upload();
+    }
   }, [file]);
 
-  if (status === "loading") {
-    return <div className={styles.loading}>Loading...</div>;
-  }
-
-  if (status === "unauthenticated") {
-    router.push("/");
-  }
+  const handleEditorStateChange = (newEditorState) => {
+    setEditorState(newEditorState);
+  };
 
   const slugify = (str) =>
     str
@@ -110,10 +73,8 @@ const WritePage = () => {
       .replace(/[\s_-]+/g, "-")
       .replace(/^-+|-+$/g, "");
 
-      
-
   const handleSubmit = async () => {
-    
+    noStore();
     const content = JSON.stringify(convertToRaw(editorState.getCurrentContent()));
 
     const res = await fetch("/api/posts", {
@@ -123,7 +84,6 @@ const WritePage = () => {
         desc: value,
         img: media,
         slug: slugify(title),
-        // catSlug: catSlug || "style", //If not selected, choose the general category
       }),
     });
 
@@ -131,84 +91,65 @@ const WritePage = () => {
       const data = await res.json();
       router.push(`/posts/${data.slug}`);
       toast.success("Post published successfully!");
-    }
-
-    if(res.status !== 200){
+    } else {
       toast.error("Error publishing post");
     }
   };
-  
-  const descStyle2 = {
-    fontFamily: 'Georgia,serif',
-    fontSize: '1.5rem',
-    lineHeight: '1.6'
-    // Add more font styles as needed
-  };
+
+  if (status === "loading") {
+    return <div className={styles.loading}>Loading...</div>;
+  }
 
   return (
     <div>
       <Nav />
-    <div className={`${styles.container} mx-auto max-w-screen-xl pt-32`} style={{paddingTop:'40px'}}>
-      <input
-        type="text"
-        placeholder="Title"
-        className={styles.input}
-        onChange={(e) => setTitle(e.target.value)}
-      />
-
-      
-      
-      <div className={`${styles.editor} flex flex-col`}>
-        
-        <div className="flex flex-col">
-          <button className={styles.button} onClick={() => setOpen(!open)} style={{paddingLeft: '10px', paddingRight: '10px' }}>
-            <Image src="/images/plus.png" alt="" width={40} height={40} />
-          </button>
-          {file && (
-          <div><p style={{ paddingLeft: '10px', paddingRight: '10px' }}>Selected Image: {file.name}</p></div>
+      <Toaster position="top-right" reverseOrder={false} />
+      <div className={`${styles.container} mx-auto max-w-screen-xl pt-32`} style={{ paddingTop: '40px' }}>
+        <input
+          type="text"
+          placeholder="Title"
+          className={styles.input}
+          onChange={(e) => setTitle(e.target.value)}
+        />
+        <div className={`${styles.editor} flex flex-col`}>
+          <div className="flex flex-col">
+            <button className={styles.button} onClick={() => setOpen(!open)} style={{ paddingLeft: '10px', paddingRight: '10px' }}>
+              <Image src="/images/plus.png" alt="" width={40} height={40} />
+            </button>
+            {file && (
+              <div><p style={{ paddingLeft: '10px', paddingRight: '10px' }}>Selected Image: {file.name}</p></div>
+            )}
+          </div>
+          <div>
+            <ReactQuill
+              id="my-quill-editor"
+              className={`${styles.textArea} z-20 `}
+              theme="bubble"
+              value={value}
+              onChange={setValue}
+              placeholder="Tell your story..."
+            />
+            <div style={{ paddingTop: '20px', paddingLeft: '10px', paddingRight: '10px' }}>
+              <Button className="mt-32 cursor-auto" variant="default" onClick={handleSubmit}> Publish </Button>
+            </div>
+          </div>
+          {open && (
+            <div className={styles.add}>
+              <input
+                type="file"
+                id="image"
+                onChange={(e) => setFile(e.target.files[0])}
+                style={{ display: "none" }}
+              />
+              <button className={styles.addButton}>
+                <label htmlFor="image">
+                  <Image src="/images/image.png" alt="" width={25} height={25} />
+                </label>
+              </button>
+            </div>
           )}
         </div>
-
-        <div>
-          <ReactQuill
-            id="my-quill-editor"
-            className={`${styles.textArea} z-20 `}
-            theme="bubble"
-            value={value}
-            onChange={setValue}
-            placeholder="Tell your story..."
-          />
-          <div style={{ paddingTop: '20px', paddingLeft: '10px', paddingRight: '10px' }}>
-            <Button className="mt-32 cursor-auto" variant="default" onClick={handleSubmit}> Publish </Button>
-          </div>
-        </div>
-      
-        {open && (
-          <div className={styles.add}>
-            <input
-              type="file"
-              id="image"
-              onChange={(e) => setFile(e.target.files[0])}
-              style={{ display: "none" }}
-            />
-            <button className={styles.addButton}>
-              <label htmlFor="image">
-                <Image src="/images/image.png" alt="" width={25} height={25} />
-              </label>
-            </button>
-            
-          </div>
-        )}
-        
-        
       </div>
-      {/* <div>
-        <Button className="mt-32" variant="default" onClick={handleSubmit}> Publish </Button>
-      </div> */}
-      
-      {/* <button className={`${styles.publish}`} onClick={handleSubmit}> */}
-      {/* </button> */}
-    </div>
     </div>
   );
 };

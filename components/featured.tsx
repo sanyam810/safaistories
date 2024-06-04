@@ -19,7 +19,12 @@ const getData = async () => {
 const Featured = async() => {
 
     const data=await getData();
-    const { title, summary, image,slug } = data[0];
+    if (!data || data.length === 0) {
+      return <div>No featured content available</div>;
+  }
+
+  // Destructure data
+  const { title, summary, image, slug } = data[0];
     
     return (
         <div className="container mx-auto px-6 min-h-screen max-w-screen-xl">
@@ -37,7 +42,8 @@ const Featured = async() => {
                 {title}
               </h1>
               <p className="mt-4 text-sm md:text-lg lg:text-xl font-light text-gray-500">
-                {summary}
+                {summary.split(" ").slice(0, 35).join(" ")}
+                {summary.split(" ").length > 35 && "..."} 
               </p>
               <Link href={`/highlights/${slug}`} passHref>
                 <Button className="mt-4 px-6 py-3 font-medium rounded-md" variant="default">

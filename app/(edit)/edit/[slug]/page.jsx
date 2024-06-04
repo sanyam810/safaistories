@@ -18,8 +18,10 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import Nav from "@/components/nav";
 import styles from "./editPage.module.css"; // Assuming you'll create a CSS module similar to writePage.module.css
+import { unstable_noStore as noStore } from 'next/cache';
 
 const EditPage = () => {
+  noStore();
   const { status } = useSession();
   const router = useRouter();
   const { slug } = useParams(); // Assuming you're using the new App Router in Next.js 13
@@ -112,7 +114,7 @@ const EditPage = () => {
 
   return (
     <div>
-      <Nav />
+      {/* <Nav /> */}
       <div className={`${styles.container} mx-auto max-w-screen-xl pt-32`} style={{ paddingTop: '40px' }}>
         <input
           type="text"

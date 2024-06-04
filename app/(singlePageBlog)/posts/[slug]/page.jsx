@@ -15,6 +15,7 @@ import { FiAlertCircle } from 'react-icons/fi';
 // import { Image } from "next/image";
 
 import { useRouter } from "next/navigation";
+import { unstable_noStore as noStore } from 'next/cache';
 
 
 
@@ -67,6 +68,7 @@ const getData = async (slug, setLikesCount,setGreenCount,setRedCount,setYellowCo
 };
 
 const SinglePage = ({ params }) => {
+  noStore();
   const { slug } = params;
   const [likesCount, setLikesCount] = useState(0);
   const [liked, setLiked] = useState(false);

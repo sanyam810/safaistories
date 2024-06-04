@@ -5,13 +5,15 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
+import { unstable_noStore as noStore } from 'next/cache';
 
 import { signOut, useSession } from "next-auth/react";
 
 
 const AdminDashboard = () => {
 
-    const router = useRouter();
+  noStore();
+    // const router = useRouter();
 
     
 
@@ -21,18 +23,18 @@ const AdminDashboard = () => {
       return <p>Loading...</p>; 
     }
   
-    useEffect(() => {
-      if (status === "unauthenticated") {
-          router.push("/login");
-      }
-  }, [status, router]);
+  //   useEffect(() => {
+  //     if (status === "unauthenticated") {
+  //         router.push("/login");
+  //     }
+  // }, [status, router]);
 
     return (
         <>
           <div>
-              <div>
+              {/* <div>
                   <Nav />
-              </div>
+              </div> */}
               <div className="flex flex-col items-center justify-center h-screen">
               <h1 className="text-4xl font-bold mb-6">Welcome, Admin!</h1>
               <div className="flex gap-4">

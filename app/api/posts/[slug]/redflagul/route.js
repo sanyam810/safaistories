@@ -1,8 +1,10 @@
 import prisma from "@/utils/connect";
 import { NextResponse } from "next/server";
 import { getAuthSession } from "@/utils/auth";
+import { unstable_noStore as noStore } from 'next/cache';
 
 export const DELETE = async (req, res) => {
+    noStore();
     const session = await getAuthSession();
     const email = session?.user?.email;
 
@@ -44,7 +46,8 @@ export const DELETE = async (req, res) => {
     }
 };
 
-export default async (req, res) => {
+export const GET = async (req, res) => {
+    noStore();
     const session = await getAuthSession();
     const email = session?.user?.email;
   

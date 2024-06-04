@@ -4,6 +4,7 @@ import Image from "next/image";
 import Comments from "@/components/commentsC/comments";
 import Nav from "@/components/nav";
 import { Button } from "@/components/ui/button";
+import { unstable_noStore as noStore } from 'next/cache';
 // import { useState } from "react";
 
 const titleStyle = {
@@ -41,6 +42,7 @@ const getData = async (slug) => {
   
 
 const SinglePage = async ({ params }) => {
+  noStore();
   // const [showTranscript, setShowTranscript] = useState(false);
   let showTranscript = false;
   const { slug } = params;
@@ -90,10 +92,10 @@ const SinglePage = async ({ params }) => {
                 <div className="prose text-xl lg:prose-lg xl:prose-xl" dangerouslySetInnerHTML={{ __html: data?.summary }} style={{ ...descStyle2 }} />
               </div>
             </div>
-            <Button variant="default" onClick={toggleTranscript}>
+            {/* <Button variant="default" onClick={toggleTranscript}>
               {showTranscript ? 'Hide Transcript' : 'Show Transcript'}
-            </Button>
-            <div id="transcript"  className="prose text-xl lg:prose-lg xl:prose-xl" dangerouslySetInnerHTML={{ __html: data?.transcript }} style={{ ...descStyle2 , display: 'none'}} />
+            </Button> */}
+            {/* <div id="transcript"  className="prose text-xl lg:prose-lg xl:prose-xl" dangerouslySetInnerHTML={{ __html: data?.transcript }} style={{ ...descStyle2 , display: 'none'}} /> */}
             <div style={{ height: '1px', width: '100%', backgroundColor: 'black', margin: '1rem 0' }}></div>
           </div>
         </div>
